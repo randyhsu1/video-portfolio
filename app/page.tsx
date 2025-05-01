@@ -1,76 +1,114 @@
-import VideoGrid from "@/components/video-grid"
-import { Header } from "@/components/header"
+"use client";
+
+import VideoGrid from "@/components/video-grid";
+import { Header } from "@/components/header";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+
+interface Video {
+  id: number
+  title: string
+  description: string
+  category: string
+  video_url: string
+  thumbnail_url: string
+  created_at: string
+}
+
+const categories = [
+  { key: "animation", name: "動畫" },
+  { key: "product", name: "產品展示" },
+  { key: "3d", name: "3D 動畫" },
+  { key: "explainer", name: "解說影片" },
+  { key: "youtube", name: "YouTube 作品" },
+];
 
 export default function Home() {
-  // Sample video data - in a real app, this would come from a database or API
-  const videos = [
-    {
-      id: 1,
-      title: "Creative Animation",
-      description: "A short animation showcasing creative techniques",
-      thumbnail: "/placeholder.svg?height=720&width=1280",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    },
-    {
-      id: 2,
-      title: "Product Showcase",
-      description: "Demonstration of product features and benefits",
-      thumbnail: "/placeholder.svg?height=720&width=1280",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    },
-    {
-      id: 3,
-      title: "Motion Graphics",
-      description: "Custom motion graphics for brand identity",
-      thumbnail: "/placeholder.svg?height=720&width=1280",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    },
-    {
-      id: 4,
-      title: "UI Animation",
-      description: "Smooth UI animations for better user experience",
-      thumbnail: "/placeholder.svg?height=720&width=1280",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-    },
-    {
-      id: 5,
-      title: "3D Rendering",
-      description: "High-quality 3D rendering and animation",
-      thumbnail: "/placeholder.svg?height=720&width=1280",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-    },
-    {
-      id: 6,
-      title: "Explainer Video",
-      description: "Clear and concise explanation of complex concepts",
-      thumbnail: "/placeholder.svg?height=720&width=1280",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    },
-    {
-      id: 7,
-      title: "YouTube Example",
-      description: "This is an example of a YouTube video in our portfolio",
-      thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-    {
-      id: 8,
-      title: "Another YouTube Example",
-      description: "Another example of embedding YouTube content",
-      thumbnail: "https://img.youtube.com/vi/C0DPdy98e4c/maxresdefault.jpg",
-      videoUrl: "https://www.youtube.com/embed/C0DPdy98e4c",
-    },
-  ]
+  const [selected, setSelected] = useState(categories[0].key);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadVideos() {
+      try {
+        setLoading(true);
+        setError("");
+        console.log('Fetching videos for category:', selected);
+        
+        // 直接從 supabase 讀取
+        const { data, error } = await supabase
+          .from('videos')
+          .select('id, title, description, category, video_url, thumbnail_url, created_at')
+          .eq('category', selected)
+          .order('created_at', { ascending: false })
+          .throwOnError();
+
+        if (error) {
+          console.error('Supabase error:', error);
+          setError("讀取資料失敗");
+          return;
+        }
+
+        console.log('Raw data from Supabase:', data);
+        
+        // 確保所有必要欄位都存在
+        const validatedData = data?.map(video => ({
+          id: video.id,
+          title: video.title || '',
+          description: video.description || '',
+          category: video.category || '',
+          video_url: video.video_url || '',
+          thumbnail_url: video.thumbnail_url || '',
+          created_at: video.created_at || ''
+        })) || [];
+
+        console.log('Setting videos to:', validatedData);
+        setVideos(validatedData);
+      } catch (err) {
+        console.error('Error loading videos:', err);
+        setError("讀取資料失敗");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadVideos();
+  }, [selected]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-2">My Video Portfolio</h1>
-        <p className="text-muted-foreground mb-8">Hover over a video to see it in action</p>
-        <VideoGrid videos={videos} />
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-6">作品分類</h1>
+        <div className="flex gap-4 mb-8">
+          {categories.map((cat) => (
+            <button
+              key={cat.key}
+              className={`px-4 py-2 rounded-md border transition-colors ${selected === cat.key ? "bg-blue-600 text-white" : "bg-white text-gray-900"}`}
+              onClick={() => setSelected(cat.key)}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+        {loading ? (
+          <div className="text-center py-10">載入中...</div>
+        ) : error ? (
+          <div className="text-red-500 text-center py-10">{error}</div>
+        ) : (
+          <VideoGrid videos={videos.map(v => ({
+            id: v.id,
+            title: v.title,
+            description: v.description,
+            thumbnail: v.thumbnail_url || "",
+            videoUrl: v.video_url || "",
+            category: v.category || "",
+            created_at: v.created_at || ""
+          }))} />
+        )}
       </div>
-    </main>
-  )
+    </div>
+  );
 }
 
