@@ -2,6 +2,8 @@ import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import AdminHeader from "@/components/admin-header"
 import VideoUploadForm from "@/components/video-upload-form"
+import CategoryManager from "@/components/category-manager"
+import VideoOrderManager from "@/components/video-order-manager"
 
 export default async function AdminPage() {
   const cookieStore = await cookies()
@@ -20,6 +22,16 @@ export default async function AdminPage() {
           <div className="bg-card rounded-lg border p-6">
             <h2 className="text-2xl font-semibold mb-4">Upload New Video</h2>
             <VideoUploadForm />
+          </div>
+          
+          {/* 分類管理 */}
+          <div className="bg-card rounded-lg border p-6">
+            <CategoryManager />
+          </div>
+          
+          {/* 影片順序管理 */}
+          <div className="bg-card rounded-lg border p-6">
+            <VideoOrderManager />
           </div>
         </div>
       </div>
