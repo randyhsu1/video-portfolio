@@ -92,7 +92,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="container mx-auto py-8">
+      <div className="container max-w-7xl mx-auto py-12 px-8">
         <h1 className="text-3xl font-bold mb-6">
           {category?.name || "載入中..."}
         </h1>

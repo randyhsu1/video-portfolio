@@ -35,11 +35,11 @@ export function Header() {
   }, [])
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="container max-w-7xl flex h-20 items-center justify-between px-8">
         <div className="flex items-center gap-2">
           <Film className="h-6 w-6" />
-          <span className="text-xl font-bold">VideoPortfolio</span>
+          <span className="text-xl font-bold">Zen Zen</span>
         </div>
 
         <nav className="hidden md:flex items-center gap-6">

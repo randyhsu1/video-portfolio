@@ -69,7 +69,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="container mx-auto py-8">
+      <div className="container max-w-7xl mx-auto py-12 px-8">
         <h1 className="text-3xl font-bold mb-6">所有作品</h1>
         {loading ? (
           <div className="text-center py-10">載入中...</div>

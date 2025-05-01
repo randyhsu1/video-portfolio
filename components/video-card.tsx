@@ -85,7 +85,7 @@ export default function VideoCard({ video, isActive, onMouseEnter, onMouseLeave 
 
   return (
     <div
-      className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg"
+      className="group relative overflow-hidden rounded-xl border bg-background shadow-md transition-all hover:shadow-lg"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
