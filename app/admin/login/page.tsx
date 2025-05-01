@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { authenticateAdmin } from "@/lib/auth"
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -22,11 +23,11 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const success = await authenticateAdmin(password)
+      const success = await authenticateAdmin(email, password)
       if (success) {
         router.push("/admin")
       } else {
-        setError("Invalid password")
+        setError("Invalid email or password")
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
@@ -45,6 +46,17 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <CardContent>
             <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Enter your email"
+                />
+              </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <Input

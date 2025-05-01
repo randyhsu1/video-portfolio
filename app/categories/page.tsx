@@ -102,8 +102,10 @@ export default function CategoriesPage() {
             id: v.id,
             title: v.title,
             description: v.description,
-            thumbnail: v.thumbnail_url,
-            videoUrl: v.video_url,
+            thumbnail: v.thumbnail_url || "",  // 確保有預設值
+            videoUrl: v.video_url || "",      // 確保有預設值
+            category: v.category || "",       // 添加 category 欄位
+            created_at: v.created_at || ""    // 添加 created_at 欄位
           }))} />
         )}
       </div>
