@@ -15,16 +15,9 @@ interface Video {
   created_at: string
 }
 
-const categories = [
-  { key: "animation", name: "動畫" },
-  { key: "product", name: "產品展示" },
-  { key: "3d", name: "3D 動畫" },
-  { key: "explainer", name: "解說影片" },
-  { key: "youtube", name: "YouTube 作品" },
-];
+
 
 export default function Home() {
-  const [selected, setSelected] = useState(categories[0].key);
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,13 +27,10 @@ export default function Home() {
       try {
         setLoading(true);
         setError("");
-        console.log('Fetching videos for category:', selected);
-        
         // 直接從 supabase 讀取
         const { data, error } = await supabase
           .from('videos')
           .select('id, title, description, category, video_url, thumbnail_url, created_at')
-          .eq('category', selected)
           .order('created_at', { ascending: false })
           .throwOnError();
 
@@ -74,24 +64,13 @@ export default function Home() {
     }
 
     loadVideos();
-  }, [selected]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6">作品分類</h1>
-        <div className="flex gap-4 mb-8">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              className={`px-4 py-2 rounded-md border transition-colors ${selected === cat.key ? "bg-blue-600 text-white" : "bg-white text-gray-900"}`}
-              onClick={() => setSelected(cat.key)}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
+        <h1 className="text-3xl font-bold mb-6">所有作品</h1>
         {loading ? (
           <div className="text-center py-10">載入中...</div>
         ) : error ? (
