@@ -80,7 +80,7 @@ export default function Home() {
             id: v.id,
             title: v.title,
             description: v.description,
-            thumbnail: v.thumbnail_url || "",
+            thumbnail: v.thumbnail_url,
             videoUrl: v.video_url || "",
             category: v.category || "",
             created_at: v.created_at || ""

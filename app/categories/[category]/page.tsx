@@ -106,7 +106,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
               id: v.id,
               title: v.title,
               description: v.description,
-              thumbnailUrl: v.thumbnail_url,
+              thumbnail: v.thumbnail_url,
               videoUrl: v.video_url,
             }))}
           />

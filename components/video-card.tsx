@@ -7,11 +7,8 @@ interface Video {
   id: number
   title: string
   description: string
-  category: string
   videoUrl: string
   thumbnail: string
-  created_at: string
-  isYoutubeVideo?: boolean
 }
 
 interface VideoCardProps {
