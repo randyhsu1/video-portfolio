@@ -28,7 +28,7 @@ export async function authenticateAdmin(email: string, password: string): Promis
 
     // 如果登入成功，設置 session cookie
     if (data.session) {
-      cookies().set("sb-access-token", data.session.access_token, {
+      await cookies().set("sb-access-token", data.session.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24, // 1 day
@@ -47,7 +47,7 @@ export async function authenticateAdmin(email: string, password: string): Promis
 export async function logoutAdmin() {
   // 登出 Supabase session
   await supabase.auth.signOut()
-  cookies().delete("sb-access-token")
+  await cookies().delete("sb-access-token")
   redirect("/admin/login")
 }
 

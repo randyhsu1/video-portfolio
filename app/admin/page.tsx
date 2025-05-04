@@ -7,10 +7,8 @@ import CategoryManager from "@/components/category-manager"
 import VideoManager from "@/components/video-manager"
 
 export default async function AdminPage() {
-  const cookieStore = await cookies()
-  const isAuthenticated = cookieStore.get("admin_authenticated")?.value === "true"
-
-  if (!isAuthenticated) {
+  const token = cookies().get("sb-access-token")?.value
+  if (!token) {
     redirect("/admin/login")
   }
 

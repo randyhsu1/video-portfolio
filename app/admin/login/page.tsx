@@ -25,7 +25,8 @@ export default function LoginPage() {
     try {
       const success = await authenticateAdmin(email, password)
       if (success) {
-        router.push("/admin")
+        console.log('Login successful, redirecting...')
+        window.location.href = '/admin'
       } else {
         setError("Invalid email or password")
       }
