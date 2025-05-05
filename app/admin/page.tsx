@@ -7,7 +7,8 @@ import CategoryManager from "@/components/category-manager"
 import VideoManager from "@/components/video-manager"
 
 export default async function AdminPage() {
-  const token = cookies().get("sb-access-token")?.value
+  const cookieStore = await cookies();
+  const token = cookieStore.get("sb-access-token")?.value
   if (!token) {
     redirect("/admin/login")
   }
@@ -25,7 +26,6 @@ export default async function AdminPage() {
           
           {/* 分類管理 */}
           <div className="space-y-8">
-            <VideoUploadForm />
             <VideoManager />
             <CategoryManager />
             <VideoOrderManager />
