@@ -13,11 +13,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 // 所有可用的分類，請與 categories/page.tsx 保持一致
 const CATEGORY_OPTIONS = [
-  { key: "animation", label: "動畫" },
-  { key: "product", label: "產品展示" },
-  { key: "3d", label: "3D 動畫" },
-  { key: "explainer", label: "解說影片" },
-  { key: "youtube", label: "YouTube 作品" },
+  { key: "product", label: "產品影片" },
+  { key: "Brand", label: "形象影片" },
+  { key: "Ad", label: "網路廣告" },
+  { key: "Short", label: "劇情短片" },
+  { key: "Show", label: "網路節目" },
+  { key: "Interview", label: "訪談紀實" },
 ];
 
 export default function VideoUploadForm() {
