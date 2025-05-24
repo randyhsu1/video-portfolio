@@ -58,7 +58,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
           .from("videos")
           .select("id, title, description, category, video_url, thumbnail_url, created_at")
           .eq("category", params.category)
-          .order("video_order", { ascending: true })
+          .order("created_at", { ascending: false })
           .throwOnError()
 
         if (error) {
