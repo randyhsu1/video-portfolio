@@ -105,7 +105,7 @@ export default function VideoCard({ video, isActive, onMouseEnter, onMouseLeave 
                   alt={video.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                   <span className="sr-only">Hover to play</span>
                 </div>
               </div>
