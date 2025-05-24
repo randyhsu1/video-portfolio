@@ -34,6 +34,11 @@ export default function VideoManager() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  // 分頁狀態
+  const [page, setPage] = useState(1)
+  const pageSize = 5;
+  const totalPages = Math.ceil(videos.length / pageSize);
+  const paginatedVideos = videos.slice((page - 1) * pageSize, page * pageSize);
 
   // 載入分類
   useEffect(() => {
@@ -142,7 +147,7 @@ export default function VideoManager() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {videos.map((video) => (
+          {paginatedVideos.map((video) => (
             <div
               key={video.id}
               className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
@@ -273,6 +278,28 @@ export default function VideoManager() {
               </div>
             </div>
           ))}
+        </div>
+        {/* 分頁按鈕 */}
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+          >
+            上一頁
+          </Button>
+          <span className="mx-2 text-sm">
+            第 {page} / {totalPages || 1} 頁
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages || totalPages === 0}
+          >
+            下一頁
+          </Button>
         </div>
       </CardContent>
     </Card>
