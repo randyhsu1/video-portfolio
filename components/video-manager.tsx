@@ -83,13 +83,32 @@ export default function VideoManager() {
     }
   }
 
+  // 新增 State
+  const [editThumbnailFile, setEditThumbnailFile] = useState<File | null>(null);
+  const [previewThumbnailUrl, setPreviewThumbnailUrl] = useState<string>("");
+
   // 更新影片
   async function handleUpdateVideo(e: React.FormEvent) {
-    e.preventDefault()
-    if (!selectedVideo) return
+    e.preventDefault();
+    if (!selectedVideo) return;
 
     try {
-      setLoading(true)
+      setLoading(true);
+      let thumbnailUrl = selectedVideo.thumbnail_url;
+
+      // 若有選擇新縮圖檔案，先上傳
+      if (editThumbnailFile) {
+        const fileExt = editThumbnailFile.name.split('.').pop();
+        const fileName = `video-thumbnails/${selectedVideo.id}_${Date.now()}.${fileExt}`;
+        const { data, error: uploadError } = await supabase.storage
+          .from('thumbnails')
+          .upload(fileName, editThumbnailFile, { upsert: true });
+        if (uploadError) throw uploadError;
+        // 取得公開網址
+        const { data: publicUrlData } = supabase.storage.from('thumbnails').getPublicUrl(fileName);
+        thumbnailUrl = publicUrlData?.publicUrl || thumbnailUrl;
+      }
+
       const { error } = await supabase
         .from("videos")
         .update({
@@ -97,20 +116,22 @@ export default function VideoManager() {
           description: selectedVideo.description,
           category: selectedVideo.category,
           video_url: selectedVideo.video_url,
-          thumbnail_url: selectedVideo.thumbnail_url,
+          thumbnail_url: thumbnailUrl,
         })
-        .eq("id", selectedVideo.id)
+        .eq("id", selectedVideo.id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast.success("影片更新成功")
-      setIsDialogOpen(false)
-      await loadVideos()
+      toast.success("影片更新成功");
+      setIsDialogOpen(false);
+      setEditThumbnailFile(null);
+      setPreviewThumbnailUrl("");
+      await loadVideos();
     } catch (err) {
-      console.error("Error updating video:", err)
-      toast.error("更新影片失敗")
+      console.error("Error updating video:", err);
+      toast.error("更新影片失敗");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -239,19 +260,54 @@ export default function VideoManager() {
                           />
                         </div>
                         <div className="grid gap-2">
-                          <Label htmlFor="thumbnail_url">縮圖網址</Label>
-                          <Input
-                            id="thumbnail_url"
-                            value={selectedVideo.thumbnail_url}
-                            onChange={(e) =>
-                              setSelectedVideo({
-                                ...selectedVideo,
-                                thumbnail_url: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
+  <Label htmlFor="thumbnail_url">縮圖網址</Label>
+  <Input
+    id="thumbnail_url"
+    value={selectedVideo.thumbnail_url}
+    onChange={(e) =>
+      setSelectedVideo({
+        ...selectedVideo,
+        thumbnail_url: e.target.value,
+      })
+    }
+    required
+  />
+  {/* 預覽目前縮圖 */}
+  {selectedVideo.thumbnail_url && (
+    <img
+      src={selectedVideo.thumbnail_url}
+      alt="目前縮圖"
+      className="w-32 h-20 object-cover mt-2 border rounded"
+    />
+  )}
+  {/* 上傳新縮圖 */}
+  <Label htmlFor="edit-thumbnail-file" className="mt-2">或上傳新縮圖</Label>
+  <Input
+    id="edit-thumbnail-file"
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files?.[0] || null;
+      setEditThumbnailFile(file);
+      if (file) {
+        // 預覽新縮圖
+        const url = URL.createObjectURL(file);
+        setPreviewThumbnailUrl(url);
+      } else {
+        setPreviewThumbnailUrl("");
+      }
+    }}
+    disabled={loading}
+  />
+  {/* 預覽新縮圖 */}
+  {previewThumbnailUrl && (
+    <img
+      src={previewThumbnailUrl}
+      alt="新縮圖預覽"
+      className="w-32 h-20 object-cover mt-2 border-2 border-blue-500 rounded"
+    />
+  )}
+</div>
                         <div className="flex justify-end gap-2">
                           <Button
                             type="button"
